@@ -24,9 +24,7 @@ class DataProgress(Config):
                     feature_description[name] = tf.io.FixedLenFeature([length], tf.float32,
                                                                       tf.constant(0.0, tf.float32, [length]))
             else:
-                if data_type == "dense":
-                    feature_description[name] = tf.io.FixedLenFeature([1], tf.float32, 0.0)
-                elif data_type == "sparse":
+                if data_type in ["dense", "sparse"]:
                     feature_description[name] = tf.io.FixedLenFeature([1], tf.float32, 0.0)
                 elif data_type == "embedding":
                     feature_description[name] = tf.io.FixedLenFeature([length], tf.float32,
