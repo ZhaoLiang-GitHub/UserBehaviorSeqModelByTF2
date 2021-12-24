@@ -1,0 +1,2 @@
+# UserBehaviorSeqModelByTF2
+TF2实现了基于用户行为的深度兴趣模型
