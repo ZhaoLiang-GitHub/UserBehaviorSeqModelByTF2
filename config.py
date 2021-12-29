@@ -1,6 +1,7 @@
 class Feature(object):
     def __init__(self, name="", feature_type="other", data_type="dense", length=1, progress="org", embedding_size=1,
                  category=1):
+        __slots__ = ()
         """
         特征类，用于描述一个在数据集中一列的
         :param name: 特征名称
@@ -32,6 +33,10 @@ class Config(object):
             Feature("seq_designer_day7_download_ratio_pv", feature_type="sequence", length=5),
             Feature("seq_designer_day7_click_ratio_pv", feature_type="sequence", length=5),
 
+
+
+
+
             Feature("userVggVec", data_type="embedding", length=125),
             Feature("dayOfWeek", data_type="sparse", category=2, embedding_size=8),
             Feature("isWeekend", data_type="sparse", category=7, embedding_size=8),
@@ -45,7 +50,7 @@ class Config(object):
             # Feature("vggEmbedding_sim"),
             Feature("vgg16_pca", data_type="embedding", length=125)
         ]
-        self.label = "is_click"
+        self.label = ["is_click"]
 
         self.batch_size = 1024
         self.seed = 1024

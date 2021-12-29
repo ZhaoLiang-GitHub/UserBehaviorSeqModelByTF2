@@ -49,6 +49,7 @@ class UserBehaviorSeqBaseModel(Config):
                                                                        self.seed),
                                                                    embeddings_regularizer=l2(
                                                                        self.l2_reg_embedding),
+                                                                   mask_zero=True,
                                                                    name=f"sparse_embedding_{name}")
             elif data_type in ["embedding"]:
                 continue

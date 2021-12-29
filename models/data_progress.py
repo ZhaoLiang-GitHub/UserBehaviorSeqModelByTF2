@@ -13,7 +13,9 @@ class DataProgress(Config):
         self.valid_tensor = None
 
     def tfrecord2tensor(self):
-        feature_description = {self.label: tf.io.FixedLenFeature([1], tf.float32)}
+        feature_description = {}
+        for l in self.label:
+            feature_description[l] = tf.io.FixedLenFeature([1], tf.float32)
         for feature in self.feature:
             name = feature.name
             feature_type = feature.feature_type
@@ -32,8 +34,10 @@ class DataProgress(Config):
 
         def _parse_function(exam_proto):  # 映射函数，用于解析一条example
             feature = tf.io.parse_single_example(exam_proto, feature_description)
-            label = float(feature[self.label])
-            feature.pop(self.label)
+            label = []
+            for f in self.label:
+                label.append(float(feature[f]))
+                feature.pop(l)
             return feature, label
 
         for name, file_name in [("train", self.train_path), ("test", self.test_path), ("valid", self.valid_path)]:
