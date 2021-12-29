@@ -14,17 +14,22 @@ class DataProgress(Config):
 
     def tfrecord2tensor(self):
         feature_description = {}
-        for l in self.label:
-            feature_description[l] = tf.io.FixedLenFeature([1], tf.float32)
+        for f in self.label:
+            feature_description[f] = tf.io.FixedLenFeature([1], tf.float32)
         for feature in self.feature:
             name = feature.name
             feature_type = feature.feature_type
             data_type = feature.data_type
             length = feature.length
+            embedding_size = feature.embedding_size
             if feature_type == "sequence":
                 if data_type in ["dense", "sparse"]:
                     feature_description[name] = tf.io.FixedLenFeature([length], tf.float32,
                                                                       tf.constant(0.0, tf.float32, [length]))
+                if data_type == "embedding":
+                    feature_description[name] = tf.io.FixedLenFeature([length, embedding_size], tf.float32,
+                                                                      tf.constant(0.0, tf.float32,
+                                                                                  [length, embedding_size]))
             else:
                 if data_type in ["dense", "sparse"]:
                     feature_description[name] = tf.io.FixedLenFeature([1], tf.float32, 0.0)
@@ -37,7 +42,7 @@ class DataProgress(Config):
             label = []
             for f in self.label:
                 label.append(float(feature[f]))
-                feature.pop(l)
+                feature.pop(f)
             return feature, label
 
         for name, file_name in [("train", self.train_path), ("test", self.test_path), ("valid", self.valid_path)]:

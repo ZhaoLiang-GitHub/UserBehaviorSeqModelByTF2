@@ -27,28 +27,42 @@ class Config(object):
         self.test_path = "./data/train/part*"
         self.valid_path = "./data/train/part*"
         self.feature = [
-            Feature("designer_day7_download_ratio_pv", feature_type="item"),
-            Feature("designer_day7_click_ratio_pv", feature_type="item"),
+            Feature("vgg16_pca", feature_type="item", data_type="embedding", length=125),
+            Feature("product_id_hash", feature_type="item", data_type="sparse", category=70000, progress="embedding",
+                    embedding_size=8),
+            Feature("designer_id_hash", feature_type="item", data_type="sparse", category=5000, progress="embedding",
+                    embedding_size=8),
+            Feature("diff_mon", feature_type="item"),
+            Feature("udesigner_day7_click_ratio", feature_type="item"),
+            Feature("udesigner_day14_click_ratio", feature_type="item"),
+            Feature("udesigner_day28_click_ratio", feature_type="item"),
 
-            Feature("seq_designer_day7_download_ratio_pv", feature_type="sequence", length=5),
-            Feature("seq_designer_day7_click_ratio_pv", feature_type="sequence", length=5),
-
-
-
-
+            Feature("seq_vgg16_pca", feature_type="sequence", data_type="embedding", embedding_size=125, length=5),
+            Feature("seq_product_id_hash", feature_type="sequence", data_type="sparse", category=70000,
+                    progress="embedding", embedding_size=8, length=5),
+            Feature("seq_designer_id_hash", feature_type="sequence", data_type="sparse", category=5000,
+                    progress="embedding", embedding_size=8, length=5),
+            Feature("seq_diff_mon", feature_type="sequence", length=5),
+            Feature("seq_udesigner_day7_click_ratio", feature_type="sequence", length=5),
+            Feature("seq_udesigner_day14_click_ratio", feature_type="sequence", length=5),
+            Feature("seq_udesigner_day28_click_ratio", feature_type="sequence", length=5),
 
             Feature("userVggVec", data_type="embedding", length=125),
             Feature("dayOfWeek", data_type="sparse", category=2, embedding_size=8),
             Feature("isWeekend", data_type="sparse", category=7, embedding_size=8),
-            Feature("udesigner_day7_download_pv"),
-            Feature("udesigner_day7_click_ratio"),
+            Feature("vggEmbedding_sim"),
+            Feature("designer_day7_download_ratio_pv"),
+            Feature("designer_day7_click_ratio_pv"),
+            Feature("designer_day7_download_ratio_uv"),
+            Feature("designer_day7_click_ratio_uv"),
+            Feature("designer_day14_download_ratio_pv"),
+            Feature("designer_day14_click_ratio_pv"),
+            Feature("designer_day14_download_ratio_uv"),
+            Feature("designer_day14_click_ratio_uv"),
             Feature("udesigner_day7_download_ratio"),
-            Feature("udesigner_day14_click_ratio"),
             Feature("udesigner_day14_download_ratio"),
-            Feature("udesigner_day28_click_ratio"),
             Feature("udesigner_day28_download_ratio"),
-            # Feature("vggEmbedding_sim"),
-            Feature("vgg16_pca", data_type="embedding", length=125)
+
         ]
         self.label = ["is_click"]
 

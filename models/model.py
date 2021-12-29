@@ -32,6 +32,10 @@ class UserBehaviorSeqBaseModel(Config):
             embedding_size = feature.embedding_size
             category = feature.category
             if feature_type == "sequence":
+                """
+                序列特征应该和商品的备选特征个数一致
+                如果在序列特征中有离散特征需要进行embedding的，则使用在商品特征的layer
+                """
                 continue
             if data_type == "dense":
                 if progress == "embedding":  # 浮点特征通过一个dense层，输出一个向量
@@ -62,9 +66,14 @@ class UserBehaviorSeqBaseModel(Config):
         embedding_size = feature.embedding_size
         length = feature.length
         if feature_type == "sequence":
-            if data_type in ["dense", "sparse"]:
-                return self.input_for_seq[name]
-
+            item_name = name.replace("seq_", "")
+            if data_type == "dense":
+                return Reshape((length, embedding_size))(self.input_for_seq[name])
+            elif data_type == "sparse":
+                return Reshape((length, embedding_size))(
+                    self.embedding_layer[f"sparse_{item_name}"](self.input_for_seq[name]))
+            elif data_type == "embedding":
+                return Reshape((length, embedding_size))(self.input_for_seq[name])
         temp_dict = {}
         if feature_type == "item":
             temp_dict = self.input_for_candidate
@@ -102,9 +111,12 @@ class UserBehaviorSeqBaseModel(Config):
             feature_type = feature.feature_type
             data_type = feature.data_type
             length = feature.length
+            embedding_size = feature.embedding_size
             if feature_type == "sequence":
                 if data_type in ["dense", "sparse"]:
                     self.input_for_seq[name] = Input((length,), name=name)
+                elif data_type == "embedding":
+                    self.input_for_seq[name] = Input((length, embedding_size), name=name)
             elif feature_type == "other":
                 if data_type in ["dense", "sparse"]:
                     self.input_for_other[name] = Input((1,), name=name)
@@ -131,7 +143,7 @@ class DIN(UserBehaviorSeqBaseModel):
         tensor_for_candidate = Concatenate(axis=2)(tensor_for_candidate_list)
 
         # attentionUnit4Din
-        tensor_seq_org = Reshape((seq_length, len(tensor_for_seq_list)))(Concatenate(axis=-1)(tensor_for_seq_list))
+        tensor_seq_org = Concatenate(axis=2)(tensor_for_seq_list)
         tensor_seq_atu = Concatenate(axis=2)([tensor_seq_org - tensor_for_candidate,
                                               tensor_seq_org,
                                               Concatenate(axis=1)(
@@ -165,3 +177,4 @@ class DIN(UserBehaviorSeqBaseModel):
 if __name__ == '__main__':
     din = DIN()
     din = din.model()
+    din.summary()
